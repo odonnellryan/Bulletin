@@ -1,14 +1,14 @@
 from peewee import MySQLDatabase, Model, CharField, IntegerField, TextField, DateTimeField, PrimaryKeyField
 import datetime
-database = MySQLDatabase('127.0.0.1', user='root', password='root')
+database = MySQLDatabase(host='127.0.0.1', user='root', password='root', database='bulletin')
 
 class Posts(Model):
 
     id = PrimaryKeyField(11)
     title = CharField(255)
-    contents = TextField()
+    content = TextField()
     posted_on = DateTimeField(default=datetime.datetime.now())
-    weighted_rank = IntegerField()
+    rank = IntegerField()
 
     class Meta:
             database = database
