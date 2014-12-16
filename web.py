@@ -6,7 +6,8 @@ app = Flask(__name__)
 @app.route('/')
 def main(number_of_posts=10):
     posts = db_mods.ranked_post_details(number_of_posts)
-    return render_template('main.html', posts=posts)
+    posts.posted_on = posts.posted_on.strftime('%d, %b %Y')
+    return render_template('posts.html', posts=posts)
 
 @app.route('/update/<int:id>', methods='get')
 def update(id=None):

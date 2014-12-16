@@ -4,7 +4,7 @@ from flask.ext.restful import fields
 post_fields = {
             'id':   fields.Integer,
             'title': fields.String,
-            'contents': fields.String,
+            'content': fields.String,
             'rank': fields.Integer,
             'posted_on': fields.DateTime,
 }

@@ -1,0 +1,27 @@
+body {
+    font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+    line-height: 2em;
+}
+
+.wrapper {
+    max-width:800px;
+    margin: 0 auto;
+    padding:2em;
+}
+
+.title {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.content {
+    padding-top:1em;
+}
+
+.rank {
+    text-align: center;
+}
+
+.post-actions {
+    text-align: right;
+}
