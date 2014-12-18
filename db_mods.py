@@ -1,5 +1,10 @@
 import db
 from flask.ext.restful import fields
+from datetime import datetime
+
+class UrgentItem(fields.Raw):
+    def format(self, value):
+        return "Urgent" if value & 0x01 else "Normal"
 
 post_fields = {
             'id':   fields.Integer,
@@ -8,6 +13,8 @@ post_fields = {
             'rank': fields.Integer,
             'posted_on': fields.DateTime,
 }
+
+
 
 Posts = db.Posts
 

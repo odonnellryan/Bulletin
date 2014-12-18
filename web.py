@@ -1,12 +1,12 @@
 from flask import Flask, render_template
 import db_mods
+import utils
 app = Flask(__name__)
 
 @app.route('/<int:number_of_posts>/', methods='get')
 @app.route('/')
 def main(number_of_posts=10):
     posts = db_mods.ranked_post_details(number_of_posts)
-    posts.posted_on = posts.posted_on.strftime('%d, %b %Y')
     return render_template('posts.html', posts=posts)
 
 @app.route('/update/<int:id>', methods='get')
