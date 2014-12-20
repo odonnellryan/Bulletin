@@ -1,27 +1,58 @@
 body {
-    font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     line-height: 2em;
+    color: #797979;
 }
 
 .wrapper {
-    max-width:800px;
+    max-width:900px;
     margin: 0 auto;
     padding:2em;
 }
 
 .title {
-    font-size: 2em;
+    text-align: right;
+    color: #00C8D6;
+    padding-right: 1rem;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
+.date {
+    padding-right: 1rem;
+    text-align: right;
+}
+
 .content {
-    padding-top:1em;
+    padding-top:0em;
+    line-height: 1.2em;
 }
 
 .rank {
+    margin: 0 auto;
+    width:80px;
+    height:80px;
     text-align: center;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.down {
+
+    background-image: url('/static/adown.png');
+}
+.up {
+    background-image: url('/static/aup.png');
 }
 
 .post-actions {
     text-align: right;
+}
+
+a {
+    color: #FF8400;
+}
+
+a:hover {
+    color: #f42a00;
 }

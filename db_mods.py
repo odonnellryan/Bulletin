@@ -2,19 +2,17 @@ import db
 from flask.ext.restful import fields
 from datetime import datetime
 
-class UrgentItem(fields.Raw):
+class CustomTime(fields.Raw):
     def format(self, value):
-        return "Urgent" if value & 0x01 else "Normal"
+        return value.strftime('%d %B %y')
 
 post_fields = {
             'id':   fields.Integer,
             'title': fields.String,
             'content': fields.String,
             'rank': fields.Integer,
-            'posted_on': fields.DateTime,
+            'posted_on': CustomTime,
 }
-
-
 
 Posts = db.Posts
 

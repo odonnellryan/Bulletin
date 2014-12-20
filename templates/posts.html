@@ -8,13 +8,11 @@
                        {{ post.title }}
                    </div>
                    <div class="pure-u-1-1 date">
-                       Posted on: {{ post.posted_on }}
+                       {{ post.posted_on }}
                    </div>
-                   <div class="pure-u-1-2 rank">
-                       Up
+                   <div class="pure-u-1-2 rank down">
                    </div>
-                   <div class="pure-u-1-2 rank">
-                       Down
+                   <div class="pure-u-1-2 rank up">
                    </div>
                 </div>
             </div>
@@ -22,7 +20,7 @@
                 {{ post.content }}
             </div>
             <div class="pure-u-1-1 post-actions">
-                Delete Edit Rank
+                <a href="/">delete</a> <a href="/">edit</a> <a href="/">rank</a>
             </div>
         </div>
     {% endfor %}
