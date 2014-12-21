@@ -24,25 +24,16 @@ body {
 }
 
 .content {
-    padding-top:0em;
     line-height: 1.2em;
+    white-space: pre-line;
+    margin-top: -1.2em;
 }
 
 .rank {
+    padding: .5rem;
+    font-size: 3em;
     margin: 0 auto;
-    width:80px;
-    height:80px;
-    text-align: center;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.down {
-
-    background-image: url('/static/adown.png');
-}
-.up {
-    background-image: url('/static/aup.png');
+    text-align: right;
 }
 
 .post-actions {
@@ -50,6 +41,7 @@ body {
 }
 
 a {
+    text-decoration: none;
     color: #FF8400;
 }
 

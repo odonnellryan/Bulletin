@@ -10,9 +10,10 @@
                    <div class="pure-u-1-1 date">
                        {{ post.posted_on }}
                    </div>
-                   <div class="pure-u-1-2 rank down">
-                   </div>
-                   <div class="pure-u-1-2 rank up">
+                   <div class="pure-u-1-1 rank">
+                       <a href="/rank/up/{{ post.id }}">▲</a>
+                   </div><div class="pure-u-1-1 rank">
+                       <a href="/rank/down/{{ post.id }}">▼</a>
                    </div>
                 </div>
             </div>
