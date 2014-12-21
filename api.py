@@ -19,6 +19,9 @@ class Posts(restful.Resource):
     def post(self, title, content, rank):
         return db_mods.new_post(title, content, rank)
 
+    def rank(self, title, content, rank):
+        return db_mods.new_post(title, content, rank)
+
 class PostList(restful.Resource):
     def get(self, number_of_posts=10):
         return db_mods.ranked_post_details(number_of_posts)

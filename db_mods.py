@@ -7,7 +7,7 @@ class CustomTime(fields.Raw):
         return value.strftime('%d %B %y')
 
 post_fields = {
-            'id':   fields.Integer,
+            'pk':   fields.Integer,
             'title': fields.String,
             'content': fields.String,
             'rank': fields.Integer,
@@ -21,8 +21,8 @@ def ranked_post_details(number):
     post_details = [fields.marshal(post, post_fields) for post in db_posts]
     return post_details
 
-def post_by_id(id):
-    return Posts.get(Posts.id == id)
+def post_by_pk(pk):
+    return Posts.get(Posts.pk == pk)
 
 def new_post(title, content, rank):
     insert_post = Posts()
@@ -30,12 +30,12 @@ def new_post(title, content, rank):
     insert_post.content = content
     insert_post.rank = rank
     insert_post.save()
-    return insert_post.id
+    return insert_post.pk
 
-def delete_post(id):
-    post = Posts.get(Posts.id == id)
+def delete_post(pk):
+    post = Posts.get(Posts.pk == pk)
     return post.delete_instance()
 
-def update_post(id, title, contents, weighted_rank):
-    post = Posts.update(title = title, contents = contents, weighted_rank = weighted_rank).where(id == id)
+def update_post(pk, title, contents, weighted_rank):
+    post = Posts.update(title = title, contents = contents, weighted_rank = weighted_rank).where(pk == pk)
     return post.execute()

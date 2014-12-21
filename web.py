@@ -11,12 +11,12 @@ def main(number_of_posts=10):
 
 @app.route('/update/<int:pk>', methods='get')
 def update(pk=None):
-    post = db_mods.post_by_id(pk)
+    post = db_mods.post_by_pk(pk)
     return render_template('update.html', post=post)
 
 @app.route('/delete/<int:pk>', methods='get')
 def delete(pk=None):
-    post = db_mods.post_by_id(id)
+    post = db_mods.post_by_pk(pk)
     return render_template('delete.html', post=post)
 
 @app.route('/new/', methods='get')

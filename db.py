@@ -4,7 +4,7 @@ database = MySQLDatabase(host='127.0.0.1', user='root', password='root', databas
 
 class Posts(Model):
 
-    id = PrimaryKeyField()
+    pk = PrimaryKeyField()
     title = CharField(255)
     content = TextField()
     posted_on = DateTimeField(default=datetime.datetime.now())
