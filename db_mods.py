@@ -4,24 +4,25 @@ from datetime import datetime
 
 class CustomTime(fields.Raw):
     def format(self, value):
-        return value.strftime('%d %B %y')
+        dt = datetime.fromtimestamp(value)
+        return dt.strftime('%d %B %y')
 
 post_fields = {
             'pk':   fields.Integer,
             'title': fields.String,
             'content': fields.String,
             'rank': fields.Integer,
-            'posted_on': CustomTime,
+            'posted_on': fields.Integer,
 }
 
 Posts = db.Posts
 
 def ranked_post_details(number):
-    db_posts = Posts.select().order_by(Posts.rank.desc()).limit(number)
+    db_posts = Posts.select().limit(number)
     post_details = [fields.marshal(post, post_fields) for post in db_posts]
     return post_details
 
-def post_by_pk(pk):
+def find_post(pk):
     return Posts.get(Posts.pk == pk)
 
 def new_post(title, content, rank):
@@ -36,6 +37,14 @@ def delete_post(pk):
     post = Posts.get(Posts.pk == pk)
     return post.delete_instance()
 
+def increase_rank(pk):
+    post = Posts.update(rank=Posts.rank+1).where(Posts.pk == pk)
+    return post.execute()
+
+def decrease_rank(pk):
+    post = Posts.update(rank=Posts.rank-1).where(Posts.pk == pk)
+    return post.execute()
+
 def update_post(pk, title, contents, weighted_rank):
-    post = Posts.update(title = title, contents = contents, weighted_rank = weighted_rank).where(pk == pk)
+    post = Posts.update(title = title, contents = contents, weighted_rank = weighted_rank).where(Posts.pk  == pk)
     return post.execute()

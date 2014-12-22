@@ -7,7 +7,7 @@ api = restful.Api(app)
 
 class Posts(restful.Resource):
     def get(self, pk):
-        post = db_mods.post_by_pk(pk)
+        post = db_mods.find_post(pk)
         return fields.marshal(post,db_mods.post_fields)
 
     def put(self, pk, title, content, rank):
