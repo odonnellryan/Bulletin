@@ -25,7 +25,6 @@ class Posts(restful.Resource):
 class Rank(restful.Resource):
     def put(self, pk, change=0):
         post_info = {str(pk): change}
-        print(pk, change)
         # simple way to not-so-securely handle multiple upvotes and downvotes.
         if not 'bulletin-rank-values' in session:
             session['bulletin-rank-values'] = post_info
