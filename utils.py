@@ -18,7 +18,7 @@ def rank(rank, date):
     return round(sign * order + seconds / 45000, 7)
 
 def sort_by_rank(posts):
-    _posts = sorted(posts, key=lambda k: rank(k['rank'],k['posted_on']), reverse=True)
+    _posts = sorted(posts, key=lambda k: rank(k['rank'],k['date']), reverse=True)
     for post in _posts:
-        post['posted_on'] = parse_datetime(post['posted_on'])
+        post['date'] = parse_datetime(post['date'])
     return _posts

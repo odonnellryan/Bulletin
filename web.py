@@ -30,13 +30,4 @@ def new():
         return redirect(url_for('main'))
     return render_template('new.html')
 
-@app.route('/rank/<direction>/<int:pk>', methods='post')
-def rank(direction=None, pk=0):
-    try:
-        int(pk)
-    except ValueError:
-        pk = 0
-    if direction == 'up':
-        db_mods.increase_rank(pk)
-    if direction == 'down':
-        db_mods.decrease_rank(pk)
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

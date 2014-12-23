@@ -3,6 +3,8 @@ from flask import g
 from peewee import OperationalError
 import db
 
+app.secret_key = 'super_secret_session_key'
+
 @app.before_request
 def before_request():
     """

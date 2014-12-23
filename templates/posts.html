@@ -1,28 +1,40 @@
 {% extends "main.html" %}
-{% block body %}
-    {% for post in posts %}
-        <div class="pure-g">
-            <div class="pure-u-3-8 title-information">
-                <div class="pure-g">
-                   <div class="pure-u-1-1 title">
-                       {{ post.title }}
-                   </div>
-                   <div class="pure-u-1-1 date">
-                       {{ post.posted_on }}
-                   </div>
-                   <div class="pure-u-1-1 rank">
-                       <a href="/rank/up/{{ post.pk }}">▲</a>
-                   </div><div class="pure-u-1-1 rank">
-                       <a href="/rank/down/{{ post.pk }}">▼</a>
-                   </div>
+    {% block scripts %}
+    <script type="text/javascript">
+        function ChangeRank(pk, value)
+        {
+            $.ajax({
+                 type: "PUT",
+                 url: "/rank/" + pk + "/" + value + "/"
+            });
+        }
+    </script>
+    {% endblock %}
+    {% block body %}
+        {% for post in posts %}
+            <div class="pure-g">
+                <div class="pure-u-3-8 title-information">
+                    <div class="pure-g">
+                       <div class="pure-u-1-1 title">
+                           {{ post.title }}
+                       </div>
+                       <div class="pure-u-1-1 date">
+                           {{ post.date }}
+                       </div>
+                       <div class="pure-u-1-1 rank">
+                           <a href="#" onclick="ChangeRank({{ post.pk }}, 1);">▲</a>
+                       </div>
+                       <div class="pure-u-1-1 rank">
+                           <a href="#" onclick="ChangeRank({{ post.pk }}, -1);">▼</a>
+                       </div>
+                    </div>
+                </div>
+                <div class="pure-u-5-8 content">
+                    {{ post.content }}
+                </div>
+                <div class="pure-u-1-1 post-actions">
+                    <a href="/">delete</a> <a href="/">edit</a> <a href="/">rank</a>
                 </div>
             </div>
-            <div class="pure-u-5-8 content">
-                {{ post.content }}
-            </div>
-            <div class="pure-u-1-1 post-actions">
-                <a href="/">delete</a> <a href="/">edit</a> <a href="/">rank</a>
-            </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
 {% endblock %}
