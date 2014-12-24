@@ -52,18 +52,17 @@ a {
 a:hover {
     color: #f42a00;
 }
-.not-active {
+.not-active, a.not-active:focus {
+    outline:none;
     color: #ffc873;
 }
 
-a.not-active:hover {
+a.active:hover, a.active:focus {
+    outline:none;
     color: #FF8400;
 }
 
-a.active:hover {
-    color: #FF8400;
-}
-
-a.not-active:active {
+a.not-active:active, a.not-active:hover {
+    outline:none;
     color: #FF8400;
 }

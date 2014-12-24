@@ -24,28 +24,27 @@ class Posts(restful.Resource):
 
 class Rank(restful.Resource):
     def put(self, pk, change=0):
-        post_info = {str(pk): change}
+        change = int(change)
+        post_info = {pk: change}
         # simple way to not-so-securely handle multiple upvotes and downvotes.
         if not 'bulletin-rank-values' in session:
             session['bulletin-rank-values'] = post_info
-            db_mods.change_rank(pk, int(change))
+            db_mods.change_rank(pk, change)
             return
-        # needs to stringy the pk
-        # JSON spec, etc.. etc..
-        if str(pk) in session['bulletin-rank-values']:
-            if session['bulletin-rank-values'][str(pk)] == change:
+        if pk in session['bulletin-rank-values']:
+            if session['bulletin-rank-values'][pk] == change:
                 # if they re-vote we want to remove their vote
-                rank = int(change) * -1
-                session['bulletin-rank-values'].pop(str(pk), None)
+                rank = change * -1
+                session['bulletin-rank-values'].pop(pk, None)
             else:
                 # if they change their vote we have to double it to counter the previous vote.
-                rank = int(change) * 2
-                session['bulletin-rank-values'][str(pk)] = change
+                rank = change * 2
+                session['bulletin-rank-values'][pk] = change
             db_mods.change_rank(pk, rank)
             return
         else:
-            session['bulletin-rank-values'][str(pk)] = change
-        db_mods.change_rank(pk, int(change))
+            session['bulletin-rank-values'][pk] = change
+        db_mods.change_rank(pk, change)
 
 
 class PostList(restful.Resource):
@@ -55,4 +54,4 @@ class PostList(restful.Resource):
 
 api.add_resource(Posts, '/post/', '/post/<int:pk>/')
 api.add_resource(PostList, '/post/list/', '/post/list/<int:number_of_posts>/')
-api.add_resource(Rank, '/rank/<int:pk>/<string:change>/')
+api.add_resource(Rank, '/rank/<string:pk>/<string:change>/')

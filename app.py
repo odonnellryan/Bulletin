@@ -1,5 +1,5 @@
 from api import app
-from flask import g
+from flask import g, session
 from peewee import OperationalError
 import db
 
@@ -10,6 +10,8 @@ def before_request():
     """
         before request
     """
+    if 'bulletin-rank-values' in session:
+        g.brv = session['bulletin-rank-values']
     try:
         g.db = db.database
         g.db.connect()

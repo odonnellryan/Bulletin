@@ -3,7 +3,8 @@ from flask.ext.restful import fields
 from datetime import datetime
 
 post_fields = {
-    'pk': fields.Integer,
+    # this is going to be a key, might as well keep it a string
+    'pk': fields.String,
     'title': fields.String,
     'content': fields.String,
     'rank': fields.Integer,

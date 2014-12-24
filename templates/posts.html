@@ -7,11 +7,11 @@
                 var id = $(this).attr('id');
                 if (dataId == id + "-up") {
                     id = id + "-down";
-                    $("a[name=" + id + "]").attr("class", "not-active");
+                    $("a[data-id=" + id + "]").attr("class", "rank-link not-active");
                 }
                 if (dataId == id + "-down") {
                     id = id + "-up";
-                    $("a[name=" + id + "]").attr("class", "not-active");
+                    $("a[data-id=" + id + "]").attr("class", "rank-link not-active");
                 }
                 $(this).toggleClass('not-active active');
                 $.ajax({
@@ -35,10 +35,10 @@
                            {{ post.date }}
                        </div>
                        <div class="pure-u-1-1 rank">
-                           <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" name="{{ post.pk }}-up" id="{{ post.pk }}" class="rank-link not-active">▲</a>
+                           <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" id="{{ post.pk }}" class="rank-link {{ post.up_active }}">▲</a>
                        </div>
                        <div class="pure-u-1-1 rank">
-                           <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" name="{{ post.pk }}-down" id="{{ post.pk }}" class="{{ post.pk }}-down rank-link not-active">▼</a>
+                           <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" id="{{ post.pk }}" class="rank-link {{ post.down_active }}">▼</a>
                        </div>
                     </div>
                 </div>
