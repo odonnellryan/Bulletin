@@ -36,6 +36,12 @@ body {
     text-align: right;
 }
 
+.confirm {
+    margin:0 auto;
+    text-align: center;
+    display: block;
+}
+
 input, textarea, button {
     margin:.25em;
 }

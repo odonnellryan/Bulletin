@@ -2,8 +2,8 @@
     {% block scripts %}
     <script type="text/javascript">
         $(function () {
-            $(".rank-link").click(function(e) {
-                var dataId = $(this).attr('data-id');
+            $(".rank-link").click(function () {
+                var dataId = $(this).attr("data-id");
                 var id = $(this).attr('id');
                 if (dataId == id + "-up") {
                     id = id + "-down";
@@ -13,17 +13,34 @@
                     id = id + "-up";
                     $("a[data-id=" + id + "]").attr("class", "rank-link not-active");
                 }
-                $(this).toggleClass('not-active active');
+                $(this).toggleClass("not-active active");
                 $.ajax({
-                 type: "PUT",
-                 url: $(this).attr('href')
+                    type: "PUT",
+                    url: $(this).attr("href")
                 });
+                return false;
+            });
+            $(".delete-post").click(function () {
+                var dataId = $(this).attr("data-id");
+                var parentDiv = $("#" + dataId);
+                var confirm = "<div class='confirm' id='" + dataId +"-confirm'><a href=''>Delete?</a>  <a href=''>Keep!</a></div>";
+                newHeight = parentDiv.height();
+                parentDiv.after(confirm);
+                $("#" + dataId + "-confirm").css("height", newHeight + "px").css("line-height", (newHeight) + "px" );
+                parentDiv.hide();
+                if (false) {
+                    $.ajax({
+                    type: "DELETE",
+                    url: $(this).attr("href")
+                    });
+                }
                 return false;
             });
         });
     </script>
     {% endblock %}
     {% block body %}
+        <div id="dialog-confirm"></div>
         {% for post in posts %}
             <div class="pure-g" id="{{ post.pk }}">
                 <div class="pure-u-3-8 title-information">
@@ -46,7 +63,7 @@
                     {{ post.content }}
                 </div>
                 <div class="pure-u-1-1 post-actions">
-                    <a href="/">delete</a> <a href="/">edit</a> <a href="/">rank</a>
+                    <a href="/posts/{{ post.pk }}/" class="delete-post" data-id="{{ post.pk }}">delete</a> <a href="/edit/{{ post.pk }}/" class="edit-post">edit</a> <a href="/post/{{ post.pk }}/" class="rank-post">rank</a>
                 </div>
             </div>
         {% endfor %}
