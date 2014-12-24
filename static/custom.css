@@ -52,3 +52,18 @@ a {
 a:hover {
     color: #f42a00;
 }
+.not-active {
+    color: #ffc873;
+}
+
+a.not-active:hover {
+    color: #FF8400;
+}
+
+a.active:hover {
+    color: #FF8400;
+}
+
+a.not-active:active {
+    color: #FF8400;
+}

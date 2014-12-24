@@ -1,18 +1,31 @@
 {% extends "main.html" %}
     {% block scripts %}
     <script type="text/javascript">
-        function ChangeRank(pk, value)
-        {
-            $.ajax({
+        $(function () {
+            $(".rank-link").click(function(e) {
+                var dataId = $(this).attr('data-id');
+                var id = $(this).attr('id');
+                if (dataId == id + "-up") {
+                    id = id + "-down";
+                    $("a[name=" + id + "]").attr("class", "not-active");
+                }
+                if (dataId == id + "-down") {
+                    id = id + "-up";
+                    $("a[name=" + id + "]").attr("class", "not-active");
+                }
+                $(this).toggleClass('not-active active');
+                $.ajax({
                  type: "PUT",
-                 url: "/rank/" + pk + "/" + value + "/"
+                 url: $(this).attr('href')
+                });
+                return false;
             });
-        }
+        });
     </script>
     {% endblock %}
     {% block body %}
         {% for post in posts %}
-            <div class="pure-g">
+            <div class="pure-g" id="{{ post.pk }}">
                 <div class="pure-u-3-8 title-information">
                     <div class="pure-g">
                        <div class="pure-u-1-1 title">
@@ -22,10 +35,10 @@
                            {{ post.date }}
                        </div>
                        <div class="pure-u-1-1 rank">
-                           <a href="#" onclick="ChangeRank({{ post.pk }}, 1);">▲</a>
+                           <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" name="{{ post.pk }}-up" id="{{ post.pk }}" class="rank-link not-active">▲</a>
                        </div>
                        <div class="pure-u-1-1 rank">
-                           <a href="#" onclick="ChangeRank({{ post.pk }}, -1);">▼</a>
+                           <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" name="{{ post.pk }}-down" id="{{ post.pk }}" class="{{ post.pk }}-down rank-link not-active">▼</a>
                        </div>
                     </div>
                 </div>
