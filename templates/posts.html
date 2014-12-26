@@ -1,17 +1,18 @@
 {% extends "main.html" %}
     {% block scripts %}
     <script type="text/javascript">
+
         $(function () {
             $(".rank-link").click(function () {
                 var dataId = $(this).attr("data-id");
                 var id = $(this).attr('id');
                 if (dataId == id + "-up") {
                     id = id + "-down";
-                    $("a[data-id=" + id + "]").attr("class", "rank-link not-active");
+                    $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
                 }
                 if (dataId == id + "-down") {
                     id = id + "-up";
-                    $("a[data-id=" + id + "]").attr("class", "rank-link not-active");
+                    $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
                 }
                 $(this).toggleClass("not-active active");
                 $.ajax({
@@ -20,22 +21,49 @@
                 });
                 return false;
             });
-            $(".delete-post").click(function () {
+
+            function toggleDivDisplay(elementoOne, elementTwo) {
+                elementoOne.slideToggle();
+                elementTwo.slideToggle();
+                //return elementTwo
+            }
+
+            function sendRequestAndDelete(request, elementToDelete, messageBox) {
+                    elementToDelete.slideToggle().remove();
+                    messageBox.slideToggle().remove();
+                    $.ajax(request);
+            }
+
+            $(".delete-post").click(function (e) {
                 var dataId = $(this).attr("data-id");
                 var parentDiv = $("#" + dataId);
-                var confirm = "<div class='confirm' id='" + dataId +"-confirm'><a href=''>Delete?</a>  <a href=''>Keep!</a></div>";
-                newHeight = parentDiv.height();
+                var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='/post/" + dataId +
+                        "/' class='confirm-delete' data-parent-id='" + dataId +
+                        "'>Delete?</a> <a href='#' class='confirm-keep'>Keep!</a></div>");
+                var elementHeight = parentDiv.height();
+                confirm.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
+                confirm.hide();
                 parentDiv.after(confirm);
-                $("#" + dataId + "-confirm").css("height", newHeight + "px").css("line-height", (newHeight) + "px" );
-                parentDiv.hide();
-                if (false) {
-                    $.ajax({
-                    type: "DELETE",
+                var request = {
+                    // need to change this to DELETE after i'm done testing
+                    type: "POST",
                     url: $(this).attr("href")
-                    });
-                }
+                };
+                toggleDivDisplay(parentDiv, confirm);
+                $(".confirm-delete").click( function () {
+                    sendRequestAndDelete(request, parentDiv, confirm);
+                    //confirm.slideUp().remove();
+                    return false;
+                });
+                $(".confirm-keep").click(function () {
+                    //var confirm = $(".confirm");
+                    parentDiv.slideToggle(400);
+                    confirm.slideToggle(400, function(){$(this).remove()});
+                    return false;
+                });
                 return false;
             });
+
         });
     </script>
     {% endblock %}
@@ -63,7 +91,7 @@
                     {{ post.content }}
                 </div>
                 <div class="pure-u-1-1 post-actions">
-                    <a href="/posts/{{ post.pk }}/" class="delete-post" data-id="{{ post.pk }}">delete</a> <a href="/edit/{{ post.pk }}/" class="edit-post">edit</a> <a href="/post/{{ post.pk }}/" class="rank-post">rank</a>
+                    <a href="/post/{{ post.pk }}/" class="delete-post" data-id="{{ post.pk }}">delete</a> <a href="/edit/{{ post.pk }}/" class="edit-post">edit</a> <a href="/post/{{ post.pk }}/" class="rank-post">rank</a>
                 </div>
             </div>
         {% endfor %}
