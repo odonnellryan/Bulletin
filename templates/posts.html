@@ -1,20 +1,20 @@
 {% extends "main.html" %}
     {% block scripts %}
         <script type="text/template" id="form-template">
-            <div class='form'>
-                <form class="pure-form" id="form-template-form" action="{0}" method="{1}">
+            <div class='form title-information' data-id="form-template-container">
+                <form class="pure-form form-template" id="{7}" action="{0}" method="{1}">
                     <fieldset>
                         <div class="pure-g">
-                            <div class="pure-u-1-1">
+                            <div class="pure-u-3-8 title-information">
                                 <input type="hidden" name="pk" class="form-pk" value="{2}">
                                 <input type="text" name="title" class="form-title" placeholder="Title" value="{3}">
                                 <input type="text" name="rank" class="form-rank" placeholder="1" value="{4}">
                             </div>
-                            <div class="pure-u-1-1">
-                                <textarea class="form-content pure-input-1" name="content" placeholder="Content">{5}</textarea>
+                            <div class="pure-u-5-8">
+                                <textarea class="pure-input-1 form-content " name="content" placeholder="Content">{5}</textarea>
                             </div>
                         </div>
-                        <button type="submit" class="pure-button pure-button-primary">{6}</button>
+                        <button type="submit" class="title-information pure-button pure-button-primary">{6}</button>
                     </fieldset>
                 </form>
             </div>
@@ -62,7 +62,7 @@
                         $.ajax(request);
                 }
 
-                $(".delete-post").click(function (e) {
+                $(".delete-post").click(function () {
                     var dataId = $(this).attr("data-id");
                     var parentDiv = $("#" + dataId);
                     var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='/post/" + dataId +
@@ -71,8 +71,7 @@
                     var elementHeight = parentDiv.height();
                     confirm.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
                     var request = {
-                        // TODO: need to change this to DELETE after i'm done testing
-                        type: "POST",
+                        type: "DELETE",
                         url: $(this).attr("href")
                     };
                     toggleDivDisplay(parentDiv, confirm);
@@ -94,7 +93,7 @@
                     var parentDiv = $("#" + dataId);
                     var postField = $("#form-template").html();
                     var elementHeight = parentDiv.height();
-                    var action = $(this).attr("href")
+                    var action = $(this).attr("href");
                     // put for update action, post for new.
                     var method = "PUT";
                     var title = parentDiv.find(".title").text().trim();
@@ -105,15 +104,14 @@
                         async: false
                     }).responseText.trim();
                     var buttonText = "Update Post";
-                    postField = postField.format(action, method, dataId, title, rank, content, buttonText);
+                    postField = postField.format(action, method, dataId, title, rank, content, buttonText, dataId + "-form");
                     postField = $(postField);
                     postField.css("height", elementHeight + "px");
-
                     toggleDivDisplay(parentDiv, postField);
                     $(postField).submit(function() {
-                        var form = $("#form-template-form");
+                        var form = $("#" + dataId + "-form");
                         var request = {
-                            type: "PUT",
+                            type: method,
                             url: action,
                             data: form.serialize()
                         };
@@ -132,51 +130,44 @@
                 });
 
                 $(".new-post").click(function () {
-                    var dataId = $(this).attr("data-id");
-                    var parentDiv = $("#" + dataId);
                     var postField = $("#form-template").html();
-                    var elementHeight = parentDiv.height();
-                    var action = "/post/" + dataId + "/";
+                    var action = "/post/";
                     // put for update action, post for new.
-                    var method = "PUT";
-                    var title = parentDiv.find(".title").text().trim();
-                    var content = parentDiv.find(".content").text().trim();
-                    var rank = $.ajax({
-                        type: "GET",
-                        url:"/rank/" + dataId + "/",
-                        async: false
-                    }).responseText.trim();
-                    var buttonText = "Update Post";
-                    postField = postField.format(action, method, dataId, title, rank, content, buttonText);
+                    var method = "POST";
+                    var title = "Title";
+                    var content = "Content";
+                    var rank = "1";
+                    var buttonText = "Post New!";
+                    var id = "newPost";
+                    postField = postField.format(action, method, "", title, rank, content, buttonText, id);
                     postField = $(postField);
-                    postField.css("height", elementHeight + "px");
-
-                    toggleDivDisplay(parentDiv, postField);
+                    $(this).hide();
+                    $(this).after(postField.hide());
+                    postField.slideToggle();
                     $(postField).submit(function() {
-                        var form = $("#form-template-form");
+                        var form = $("#newPost");
                         var request = {
-                            type: "PUT",
+                            type: method,
                             url: action,
                             data: form.serialize()
                         };
-                        sendRequestAndHide(request, parentDiv, postField);
-                        var fields = form.serializeArray();
-
-                        $.each(fields, function( i, field ) {
-                            //alert(field.value + field.name);
-                            parentDiv.find("." + field.name).text(field.value);
-                        });
-
-                        parentDiv.slideToggle();
+                        $.ajax(request);
+                        location.reload();
                         return false;
                     });
                     return false;
+
                 });
             });
         </script>
     {% endblock %}
     {% block body %}
-        <a href="/new/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">new</a>
+        <div class="pure-g" id="new-post">
+            <div class="pure-u-1-1 title-information">
+                <a href="/new/" data-id="" class="new-post">new</a>
+            </div>
+        </div>
+
         {% for post in posts %}
             <div class="pure-g" id="{{ post.pk }}">
                 <div class="pure-u-3-8 title-information">

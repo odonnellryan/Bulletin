@@ -79,5 +79,10 @@ a.active.down, a.active.down:active, a.active.down:hover, a.active.down:focus {
     color: #00C8D6;
 }
 
+.title-information {
+    text-align: right;
+}
 
-
+.form-content {
+    height:100%;
+}
