@@ -1,5 +1,5 @@
 from flask.ext import restful
-from flask import session, g
+from flask import session, g, request
 from flask.ext.restful import fields
 from web import app
 import db_mods
@@ -12,17 +12,23 @@ class Posts(restful.Resource):
         post = db_mods.find_post(pk)
         return fields.marshal(post, db_mods.post_fields)
 
-    def put(self, pk, title, content, rank):
-        return db_mods.update_post(pk, title, content, rank)
+    def put(self, pk):
+        return db_mods.update_post(pk, request.form['title'], request.form['content'], request.form['rank'])
 
     def delete(self, pk):
         return db_mods.delete_post(pk)
 
-    def post(self, title, content, rank):
-        return db_mods.new_post(title, content, rank)
+    def post(self):
+        return db_mods.new_post(request.form['title'], request.form['content'], request.form['rank'])
 
 
 class Rank(restful.Resource):
+
+    def get(self, pk):
+        if db_mods.find_post(pk):
+            return int(db_mods.find_post(pk).rank)
+        return None
+
     def put(self, pk, change=0):
         change = int(change)
         post_info = {pk: change}
@@ -54,4 +60,4 @@ class PostList(restful.Resource):
 
 api.add_resource(Posts, '/post/', '/post/<int:pk>/')
 api.add_resource(PostList, '/post/list/', '/post/list/<int:number_of_posts>/')
-api.add_resource(Rank, '/rank/<string:pk>/<string:change>/')
+api.add_resource(Rank, '/rank/<string:pk>/', '/rank/<string:pk>/<string:change>/')

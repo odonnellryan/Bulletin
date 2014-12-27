@@ -28,13 +28,16 @@ def post_mods(posts, session_info):
     _posts = sorted(posts, key=lambda k: rank(k['rank'],k['date']), reverse=True)
     for post in _posts:
         post['date'] = parse_datetime(post['date'])
-        if post['pk'] in session_info and session_info[post['pk']] == '-1':
+        if not session_info:
+            post['down_active'] = "not-active"
+            post['up_active'] = "not-active"
+            continue
+        if post['pk'] in session_info and session_info[post['pk']] == -1:
             post['down_active'] = "active"
         else:
             post['down_active'] = "not-active"
-        if str(post['pk']) in session_info and session_info[post['pk']] == '1':
+        if str(post['pk']) in session_info and session_info[post['pk']] == 1:
             post['up_active'] = "active"
         else:
             post['up_active'] = "not-active"
-
     return _posts

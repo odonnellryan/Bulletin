@@ -11,4 +11,4 @@ class Posts(Model):
     rank = IntegerField(default=0)
 
     class Meta:
-            database = database
+        database = database

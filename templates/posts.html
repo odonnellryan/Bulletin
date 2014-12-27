@@ -1,74 +1,182 @@
 {% extends "main.html" %}
     {% block scripts %}
-    <script type="text/javascript">
+        <script type="text/template" id="form-template">
+            <div class='form'>
+                <form class="pure-form" id="form-template-form" action="{0}" method="{1}">
+                    <fieldset>
+                        <div class="pure-g">
+                            <div class="pure-u-1-1">
+                                <input type="hidden" name="pk" class="form-pk" value="{2}">
+                                <input type="text" name="title" class="form-title" placeholder="Title" value="{3}">
+                                <input type="text" name="rank" class="form-rank" placeholder="1" value="{4}">
+                            </div>
+                            <div class="pure-u-1-1">
+                                <textarea class="form-content pure-input-1" name="content" placeholder="Content">{5}</textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="pure-button pure-button-primary">{6}</button>
+                    </fieldset>
+                </form>
+            </div>
+        </script>
+        <script type="text/javascript">
+            $(function () {
+                String.prototype.format = String.prototype.f = function() {
+                    var s = this,
+                        i = arguments.length;
 
-        $(function () {
-            $(".rank-link").click(function () {
-                var dataId = $(this).attr("data-id");
-                var id = $(this).attr('id');
-                if (dataId == id + "-up") {
-                    id = id + "-down";
-                    $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
-                }
-                if (dataId == id + "-down") {
-                    id = id + "-up";
-                    $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
-                }
-                $(this).toggleClass("not-active active");
-                $.ajax({
-                    type: "PUT",
-                    url: $(this).attr("href")
-                });
-                return false;
-            });
-
-            function toggleDivDisplay(elementoOne, elementTwo) {
-                elementoOne.slideToggle();
-                elementTwo.slideToggle();
-                //return elementTwo
-            }
-
-            function sendRequestAndDelete(request, elementToDelete, messageBox) {
-                    elementToDelete.slideToggle().remove();
-                    messageBox.slideToggle().remove();
-                    $.ajax(request);
-            }
-
-            $(".delete-post").click(function (e) {
-                var dataId = $(this).attr("data-id");
-                var parentDiv = $("#" + dataId);
-                var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='/post/" + dataId +
-                        "/' class='confirm-delete' data-parent-id='" + dataId +
-                        "'>Delete?</a> <a href='#' class='confirm-keep'>Keep!</a></div>");
-                var elementHeight = parentDiv.height();
-                confirm.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
-                confirm.hide();
-                parentDiv.after(confirm);
-                var request = {
-                    // need to change this to DELETE after i'm done testing
-                    type: "POST",
-                    url: $(this).attr("href")
+                    while (i--) {
+                        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+                    }
+                    return s;
                 };
-                toggleDivDisplay(parentDiv, confirm);
-                $(".confirm-delete").click( function () {
-                    sendRequestAndDelete(request, parentDiv, confirm);
-                    //confirm.slideUp().remove();
+                $(".rank-link").click(function () {
+                    var dataId = $(this).attr("data-id");
+                    var id = $(this).attr('id');
+                    if (dataId == id + "-up") {
+                        id = id + "-down";
+                        $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
+                    }
+                    if (dataId == id + "-down") {
+                        id = id + "-up";
+                        $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
+                    }
+                    $(this).toggleClass("not-active active");
+                    $.ajax({
+                        type: "PUT",
+                        url: $(this).attr("href")
+                    });
                     return false;
                 });
-                $(".confirm-keep").click(function () {
-                    //var confirm = $(".confirm");
-                    parentDiv.slideToggle(400);
-                    confirm.slideToggle(400, function(){$(this).remove()});
-                    return false;
-                });
-                return false;
-            });
 
-        });
-    </script>
+                function toggleDivDisplay(elementOne, elementTwo) {
+                    elementTwo.hide();
+                    elementOne.after(elementTwo);
+                    elementOne.slideToggle();
+                    elementTwo.slideToggle();
+                }
+
+                function sendRequestAndHide(request, oldElement, messageBox) {
+                        oldElement.hide();
+                        messageBox.slideToggle(400, function(){$(this).remove()});
+                        $.ajax(request);
+                }
+
+                $(".delete-post").click(function (e) {
+                    var dataId = $(this).attr("data-id");
+                    var parentDiv = $("#" + dataId);
+                    var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='/post/" + dataId +
+                            "/' class='confirm-delete pure-button pure-button-primary' data-parent-id='" + dataId +
+                            "'>Delete?</a> <a href='#' class='confirm-keep pure-button'>Keep!</a></div>");
+                    var elementHeight = parentDiv.height();
+                    confirm.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
+                    var request = {
+                        // TODO: need to change this to DELETE after i'm done testing
+                        type: "POST",
+                        url: $(this).attr("href")
+                    };
+                    toggleDivDisplay(parentDiv, confirm);
+                    $(".confirm-delete").click( function () {
+                        sendRequestAndHide(request, parentDiv, confirm);
+                        parentDiv.remove();
+                        return false;
+                    });
+                    $(".confirm-keep").click(function () {
+                        parentDiv.slideToggle();
+                        confirm.slideToggle(400, function(){$(this).remove()});
+                        return false;
+                    });
+                    return false;
+                });
+
+                $(".edit-post").click(function () {
+                    var dataId = $(this).attr("data-id");
+                    var parentDiv = $("#" + dataId);
+                    var postField = $("#form-template").html();
+                    var elementHeight = parentDiv.height();
+                    var action = $(this).attr("href")
+                    // put for update action, post for new.
+                    var method = "PUT";
+                    var title = parentDiv.find(".title").text().trim();
+                    var content = parentDiv.find(".content").text().trim();
+                    var rank = $.ajax({
+                        type: "GET",
+                        url:"/rank/" + dataId + "/",
+                        async: false
+                    }).responseText.trim();
+                    var buttonText = "Update Post";
+                    postField = postField.format(action, method, dataId, title, rank, content, buttonText);
+                    postField = $(postField);
+                    postField.css("height", elementHeight + "px");
+
+                    toggleDivDisplay(parentDiv, postField);
+                    $(postField).submit(function() {
+                        var form = $("#form-template-form");
+                        var request = {
+                            type: "PUT",
+                            url: action,
+                            data: form.serialize()
+                        };
+                        sendRequestAndHide(request, parentDiv, postField);
+                        var fields = form.serializeArray();
+
+                        $.each(fields, function( i, field ) {
+                            //alert(field.value + field.name);
+                            parentDiv.find("." + field.name).text(field.value);
+                        });
+
+                        parentDiv.slideToggle();
+                        return false;
+                    });
+                    return false;
+                });
+
+                $(".new-post").click(function () {
+                    var dataId = $(this).attr("data-id");
+                    var parentDiv = $("#" + dataId);
+                    var postField = $("#form-template").html();
+                    var elementHeight = parentDiv.height();
+                    var action = "/post/" + dataId + "/";
+                    // put for update action, post for new.
+                    var method = "PUT";
+                    var title = parentDiv.find(".title").text().trim();
+                    var content = parentDiv.find(".content").text().trim();
+                    var rank = $.ajax({
+                        type: "GET",
+                        url:"/rank/" + dataId + "/",
+                        async: false
+                    }).responseText.trim();
+                    var buttonText = "Update Post";
+                    postField = postField.format(action, method, dataId, title, rank, content, buttonText);
+                    postField = $(postField);
+                    postField.css("height", elementHeight + "px");
+
+                    toggleDivDisplay(parentDiv, postField);
+                    $(postField).submit(function() {
+                        var form = $("#form-template-form");
+                        var request = {
+                            type: "PUT",
+                            url: action,
+                            data: form.serialize()
+                        };
+                        sendRequestAndHide(request, parentDiv, postField);
+                        var fields = form.serializeArray();
+
+                        $.each(fields, function( i, field ) {
+                            //alert(field.value + field.name);
+                            parentDiv.find("." + field.name).text(field.value);
+                        });
+
+                        parentDiv.slideToggle();
+                        return false;
+                    });
+                    return false;
+                });
+            });
+        </script>
     {% endblock %}
     {% block body %}
-        <div id="dialog-confirm"></div>
+        <a href="/new/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">new</a>
         {% for post in posts %}
             <div class="pure-g" id="{{ post.pk }}">
                 <div class="pure-u-3-8 title-information">
@@ -79,19 +187,18 @@
                        <div class="pure-u-1-1 date">
                            {{ post.date }}
                        </div>
-                       <div class="pure-u-1-1 rank">
-                           <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" id="{{ post.pk }}" class="rank-link {{ post.up_active }}">▲</a>
+                       <div class="pure-u-1-1 rank-container">
+                           <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" id="{{ post.pk }}" class="rank-link up {{ post.up_active }}">▲</a>
                        </div>
-                       <div class="pure-u-1-1 rank">
-                           <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" id="{{ post.pk }}" class="rank-link {{ post.down_active }}">▼</a>
+                       <div class="pure-u-1-1 rank-container">
+                           <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" id="{{ post.pk }}" class="rank-link down {{ post.down_active }}">▼</a>
                        </div>
                     </div>
                 </div>
-                <div class="pure-u-5-8 content">
-                    {{ post.content }}
-                </div>
+                <div class="pure-u-5-8 content">{{ post.content }}</div>
                 <div class="pure-u-1-1 post-actions">
-                    <a href="/post/{{ post.pk }}/" class="delete-post" data-id="{{ post.pk }}">delete</a> <a href="/edit/{{ post.pk }}/" class="edit-post">edit</a> <a href="/post/{{ post.pk }}/" class="rank-post">rank</a>
+                    <a href="/post/{{ post.pk }}/" class="delete-post" data-id="{{ post.pk }}">delete</a>
+                    <a href="/post/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">edit</a>
                 </div>
             </div>
         {% endfor %}

@@ -24,12 +24,12 @@ body {
 }
 
 .content {
-    line-height: 1.2em;
+    line-height: 4em;
     white-space: pre-line;
     margin-top: -.75em;
 }
 
-.rank {
+.rank-container {
     padding-right: .5em;
     font-size: 1.75em;
     margin: 0 auto;
@@ -58,17 +58,26 @@ a {
 a:hover {
     color: #f42a00;
 }
-.not-active, a.not-active:focus {
+
+a.up.not-active, a.up.not-active:focus {
     outline:none;
     color: #ffc873;
 }
 
-a.active:hover, a.active:focus {
+a.active.up, a.active.up:active, a.active.up:hover, a.up.active:focus {
     outline:none;
-    color: #FF8400;
+    color: #ff9d3a;
 }
 
-a.not-active:active, a.not-active:hover {
+a.not-active.down, a.not-active.down:focus {
     outline:none;
-    color: #FF8400;
+    color: #c4f3ff;
 }
+
+a.active.down, a.active.down:active, a.active.down:hover, a.active.down:focus {
+    outline:none;
+    color: #00C8D6;
+}
+
+
+

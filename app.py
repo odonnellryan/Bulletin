@@ -10,8 +10,6 @@ def before_request():
     """
         before request
     """
-    if 'bulletin-rank-values' in session:
-        g.brv = session['bulletin-rank-values']
     try:
         g.db = db.database
         g.db.connect()

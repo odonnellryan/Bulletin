@@ -6,7 +6,8 @@ app = Flask(__name__)
 @app.route('/<int:number_of_posts>/', methods='get')
 @app.route('/')
 def main(number_of_posts=10):
-    posts = utils.post_mods(db_mods.ranked_post_details(number_of_posts), g.brv)
+    session_info = session.get('bulletin-rank-values') or None
+    posts = utils.post_mods(db_mods.ranked_post_details(number_of_posts), session_info)
     return render_template('posts.html', posts=posts)
 
 @app.route('/update/<int:pk>', methods='get')
