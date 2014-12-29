@@ -1,6 +1,37 @@
 from datetime import datetime
 import math
 
+class Pagination:
+    def __init__(self, per_page, posts, page):
+        self.page = page
+        self.per_page = per_page
+        self.total_count = len(posts)
+        self.posts = posts
+
+    @property
+    def pages(self):
+        return int(math.ceil(self.total_count / float(self.per_page)))
+
+    @property
+    def prev_page(self):
+        if (self.page - 1) >= 1:
+            return self.page - 1
+        return None
+
+    @property
+    def next_page(self):
+        if (self.page + 1) <= self.pages:
+            return self.page + 1
+        return None
+
+    @property
+    def posts_by_page(self):
+        # first page is really page 0, etc.
+        start_post = (self.page - 1) * self.per_page
+        end_post = start_post + self.per_page
+        return self.posts[start_post:end_post]
+
+
 def parse_datetime(timestamp):
     dt = datetime.fromtimestamp(timestamp)
     return dt.strftime('%d %B %y')

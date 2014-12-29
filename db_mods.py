@@ -1,6 +1,7 @@
-import db
 from flask.ext.restful import fields
-from datetime import datetime
+
+import db
+
 
 post_fields = {
     # this is going to be a key, might as well keep it a string
@@ -14,8 +15,8 @@ post_fields = {
 Posts = db.Posts
 
 
-def ranked_post_details(number):
-    db_posts = Posts.select().limit(number)
+def ranked_post_details():
+    db_posts = Posts.select().where(Posts.hidden == 0)
     post_details = [fields.marshal(post, post_fields) for post in db_posts]
     return post_details
 
@@ -34,8 +35,8 @@ def new_post(title, content, rank):
 
 
 def delete_post(pk):
-    post = Posts.get(Posts.pk == pk)
-    return post.delete_instance()
+    post = Posts.update(hidden=1).where(Posts.pk == pk)
+    return post.execute()
 
 
 def change_rank(pk, change):
