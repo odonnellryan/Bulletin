@@ -24,7 +24,6 @@ def main(page):
 @app.route('/delete/<int:pk>/', methods=['get','delete'])
 def delete(pk=None):
     post = db_mods.find_post(pk)
-    print(post.title)
     if request.method == 'DELETE' and post:
         db_mods.delete_post(pk)
         return redirect(url_for('main'))
