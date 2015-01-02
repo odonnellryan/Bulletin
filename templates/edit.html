@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+{% block body %}
+<form class="pure-form" action="/edit/" method="PUT">
+    <fieldset>
+        <legend>Edit Bulletin</legend>
+        <div class="pure-g">
+            <div class="pure-u-1-1">
+                <input type="text" name="title" placeholder="{{ post.title }}">
+                <input type="text" name="rank" placeholder="{{ post.rank }}">
+            </div>
+            <div class="pure-u-1-1">
+                <textarea class="pure-input-1" name="content" placeholder="{{ post.content }}"></textarea>
+            </div>
+        </div>
+        <button type="submit"  class="pure-button pure-button-primary">Update!</button>
+    </fieldset>
+</form>
+{% endblock %}

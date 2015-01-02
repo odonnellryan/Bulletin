@@ -7,10 +7,19 @@
         {% block scripts %}{% endblock %}
         <link rel="stylesheet" href="{{ url_for("static", filename="custom.css") }}">
         <meta charset="UTF-8">
-        <title></title>
+        <title>{{ company_name }} Bulletin Board</title>
     </head>
     <body>
         <div class="wrapper">
+        <div class="pure-g">
+            <div class="pure-u-1-8 logo-image">
+            </div>
+            <div class="pure-u-7-8">
+                <h1>
+                    {{ company_name }}
+                </h1>
+            </div>
+        </div>
             {% block body %}{% endblock %}
         </div>
     </body>

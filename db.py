@@ -9,7 +9,7 @@ class Posts(Model):
     content = TextField()
     date = IntegerField(default=time.time())
     rank = IntegerField(default=0)
-    # if hidden is 1 (true) the post won't be displated
+    # if hidden is 1 (true) the post won't be displayed
     hidden = IntegerField(default=0)
 
     class Meta:

@@ -179,8 +179,8 @@
                 </div>
                 <div class="pure-u-3-4 content">{{ post.content }}</div>
                 <div class="pure-u-1-1 post-actions">
-                    <a href="/post/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">edit </a>
-                    <a href="/post/{{ post.pk }}/" data-id="{{ post.pk }}" class="delete-post">delete </a>
+                    <a href="/edit/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">edit </a>
+                    <a href="/delete/{{ post.pk }}/" data-id="{{ post.pk }}" class="delete-post">delete </a>
                 </div>
             </div>
         {% endfor %}
