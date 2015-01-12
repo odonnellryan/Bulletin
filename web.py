@@ -8,6 +8,8 @@ app = Flask(__name__)
 @app.route('/', defaults={'page':1})
 @app.route('/<int:page>/')
 def main(page):
+    # begin way to track if a user has already upvoted/downvoted
+    # this is a no account app, but we still want it to track as best we can if we've voted.
     if page == 1:
         session_info = session.get('bulletin-rank-values') or None
         session['posts'] = utils.post_mods(db_mods.ranked_post_details(), session_info)
