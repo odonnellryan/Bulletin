@@ -13,8 +13,8 @@
     </div>
     <div class="pure-u-3-4 content">{{ post.content }}</div>
     <div class="pure-u-1-1 post-actions">
-        <form class="pure-form" action="/delete/" method="DELETE">
-            <button type="submit"  class="pure-button pure-button-primary">Delete!</button>
+        <form class="pure-form" action="/delete/{{ post.pk }}/" method="POST">
+            <button type="submit" class="pure-button pure-button-primary">Delete!</button>
             <a href="/" class="confirm-keep pure-button">Keep!</a>
         </form>
     </div>

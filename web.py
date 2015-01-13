@@ -23,10 +23,10 @@ def main(page):
     pages = range(1, pages + 1)
     return render_template('posts.html', posts=posts, pages=pages, next_page=next_page, prev_page=prev_page)
 
-@app.route('/delete/<int:pk>/', methods=['get','delete'])
+@app.route('/delete/<int:pk>/', methods=['get','post'])
 def delete(pk=None):
     post = db_mods.find_post(pk)
-    if request.method == 'DELETE' and post:
+    if request.method == 'POST' and post:
         db_mods.delete_post(pk)
         return redirect(url_for('main'))
     return render_template('delete.html', post=post)
