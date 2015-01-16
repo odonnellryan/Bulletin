@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, g
+from flask import Flask, render_template, request, redirect, url_for, session, g, flash
 import db_mods
 import utils
 import config
@@ -51,6 +51,6 @@ def edit(pk=None):
         except ValueError:
             # TODO: add errors/alerts here
             return redirect(url_for('main'))
-        db_mods.update_post(pk, request.form['title'], request.form['content'], rank)
+        db_mods.edit_post(pk, request.form['title'], request.form['content'], rank)
         return redirect(url_for('main'))
     return render_template('edit.html', post=post)

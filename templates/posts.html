@@ -46,11 +46,10 @@
                     });
                     return false;
                 });
-
                 $(".delete-post").click(function () {
                     var dataId = $(this).attr("data-id");
                     var parentDiv = $("#" + dataId);
-                    var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='/post/" + dataId +
+                    var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='" + $(this).attr("href") +
                             "/' class='confirm-delete pure-button pure-button-primary' data-parent-id='" + dataId +
                             "'>Delete?</a> <a href='#' class='confirm-keep pure-button'>Keep!</a></div>");
                     var elementHeight = parentDiv.height();
@@ -183,7 +182,7 @@
                 <div class="pure-u-3-4 content">{{ post.content }}</div>
                 <div class="pure-u-1-1 post-actions">
                     <a href="/edit/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">edit </a>
-                    <a href="/delete/{{ post.pk }}/" data-id="{{ post.pk }}" class="delete-post">delete </a>
+                    <a href="/post/{{ post.pk }}/" data-id="{{ post.pk }}" class="delete-post">delete </a>
                 </div>
             </div>
         {% endfor %}

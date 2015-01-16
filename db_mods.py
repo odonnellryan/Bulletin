@@ -44,6 +44,6 @@ def change_rank(pk, change):
     return post.execute()
 
 
-def update_post(pk, title, content, rank):
+def edit_post(pk, title, content, rank):
     post = Posts.update(title=title, content=content, rank=rank).where(Posts.pk == pk)
     return post.execute()

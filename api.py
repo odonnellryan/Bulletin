@@ -13,7 +13,7 @@ class Posts(restful.Resource):
         return fields.marshal(post, db_mods.post_fields)
 
     def put(self, pk):
-        return db_mods.update_post(pk, request.form['title'], request.form['content'], request.form['rank'])
+        return db_mods.edit_post(pk, request.form['title'], request.form['content'], request.form['rank'])
 
     def delete(self, pk):
         return db_mods.delete_post(pk)
