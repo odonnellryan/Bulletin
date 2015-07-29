@@ -1,5 +1,5 @@
-from peewee import MySQLDatabase
+from peewee import SqliteDatabase
 
-database = MySQLDatabase(host='127.0.0.1', user='root', password='root', database='bulletin')
+database = SqliteDatabase('C:\\test.db')
 page_length = 10
 company_name = "Test Company"
