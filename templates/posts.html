@@ -1,206 +1,223 @@
 {% extends "main.html" %}
-    {% block scripts %}
-        {% include "post_template.html" %}
-        <script type="text/javascript">
-            $(function () {
-                String.prototype.format = String.prototype.f = function() {
-                    var s = this,
-                        i = arguments.length;
+{% block scripts %}
+    {% include "post_template.html" %}
+    <script type="text/javascript">
+        $(function () {
+            String.prototype.format = String.prototype.f = function () {
+                var s = this,
+                    i = arguments.length;
 
-                    while (i--) {
-                        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-                    }
-                    return s;
-                };
-
-                function toggleDivDisplay(elementOne, elementTwo) {
-                    elementTwo.hide();
-                    elementOne.after(elementTwo);
-                    elementOne.slideToggle();
-                    elementTwo.slideToggle();
+                while (i--) {
+                    s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
                 }
+                return s;
+            };
 
-                function sendRequestAndHide(request, oldElement, messageBox) {
-                        oldElement.hide();
-                        messageBox.slideToggle(400, function(){$(this).remove()});
-                        $.ajax(request);
+            var errorDiv = "<div class='error'>{0}</div>";
+
+            function toggleDivDisplay(elementOne, elementTwo) {
+                elementTwo.hide();
+                elementOne.after(elementTwo);
+                elementOne.slideToggle();
+                elementTwo.slideToggle();
+            }
+
+            function sendRequestAndHide(request, oldElement, messageBox) {
+                oldElement.hide();
+                messageBox.slideToggle(400, function () {
+                    $(this).remove()
+                });
+                $.ajax(request).done(function (r) {
+                    if (r.error) {
+                        var error = $(errorDiv.format(r.error));
+                        var elementHeight = oldElement.height();
+                        error.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
+                        toggleDivDisplay(messageBox, error);
+                        setTimeout(function () {
+                            toggleDivDisplay(error, oldElement);
+                        }, 1000)
+                    }
+                });
+            }
+
+            $(".rank-container").show();
+
+            $(".rank-link").click(function () {
+                var dataId = $(this).attr("data-id");
+                var id = $(this).attr('id');
+                if (dataId == id + "-up") {
+                    id = id + "-down";
+                    $("a[data-id=" + id + "]").removeClass("active").addClass("not-active");
                 }
-
-                $(".rank-container").show();
-
-                $(".rank-link").click(function () {
-                    var dataId = $(this).attr("data-id");
-                    var id = $(this).attr('id');
-                    if (dataId == id + "-up") {
-                        id = id + "-down";
-                        $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
-                    }
-                    if (dataId == id + "-down") {
-                        id = id + "-up";
-                        $("a[data-id=" + id + "]").removeClass( "active" ).addClass( "not-active" );
-                    }
-                    $(this).toggleClass("not-active active");
-                    $.ajax({
-                        type: "PUT",
-                        url: $(this).attr("href")
-                    });
-                    return false;
+                if (dataId == id + "-down") {
+                    id = id + "-up";
+                    $("a[data-id=" + id + "]").removeClass("active").addClass("not-active");
+                }
+                $(this).toggleClass("not-active active");
+                $.ajax({
+                    type: "PUT",
+                    url: $(this).attr("href")
                 });
-                $(".delete-post").click(function () {
-                    var dataId = $(this).attr("data-id");
-                    var parentDiv = $("#" + dataId);
-                    var confirm = $("<div class='confirm' id='" + dataId +"-confirm' ><a href='" + $(this).attr("href") +
-                            "/' class='confirm-delete pure-button pure-button-primary' data-parent-id='" + dataId +
-                            "'>Delete?</a> <a href='#' class='confirm-keep pure-button'>Keep!</a></div>");
-                    var elementHeight = parentDiv.height();
-                    confirm.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
-                    var request = {
-                        type: "DELETE",
-                        url: $(this).attr("href")
-                    };
-                    toggleDivDisplay(parentDiv, confirm);
-                    $(".confirm-delete").click( function () {
-                        sendRequestAndHide(request, parentDiv, confirm);
-                        parentDiv.remove();
-                        return false;
-                    });
-                    $(".confirm-keep").click(function () {
-                        parentDiv.slideToggle();
-                        confirm.slideToggle(400, function(){$(this).remove()});
-                        return false;
-                    });
-                    return false;
-                });
-
-                $(".edit-post").click(function () {
-                    var dataId = $(this).attr("data-id");
-                    var parentDiv = $("#" + dataId);
-                    var postField = $("#form-template").html();
-                    var elementHeight = parentDiv.height();
-                    var action = $(this).attr("href");
-                    // put for update action, post for new.
-                    var method = "PUT";
-                    var title = parentDiv.find(".title").text().trim();
-                    var content = parentDiv.find(".content").text().trim();
-                    var rank = $.ajax({
-                        type: "GET",
-                        url:"/rank/" + dataId + "/",
-                        async: false
-                    }).responseText.trim();
-                    var buttonText = "Update Post";
-                    postField = postField.format(action, method, dataId, title, rank, content, buttonText, dataId + "-form");
-                    postField = $(postField);
-                    postField.css("height", elementHeight + "px");
-                    toggleDivDisplay(parentDiv, postField);
-                    $(".cancel-button").click(function() {
-                        postField.slideToggle(400, function(){$(this).remove()});
-                        parentDiv.slideToggle();
-                        return false;
-                    });
-                    $(postField).submit(function() {
-                        var form = $("#" + dataId + "-form");
-                        var request = {
-                            type: method,
-                            url: action,
-                            data: form.serialize()
-                        };
-                        sendRequestAndHide(request, parentDiv, postField);
-                        var fields = form.serializeArray();
-
-                        $.each(fields, function( i, field ) {
-                            //alert(field.value + field.name);
-                            parentDiv.find("." + field.name).text(field.value);
-                        });
-
-                        parentDiv.slideToggle();
-                        return false;
-                    });
-                    return false;
-                });
-
-                $(".new-post").click(function () {
-                    var postField = $("#form-template").html();
-                    var action = "/post/";
-                    // put for update action, post for new.
-                    var method = "POST";
-                    var title = "Title";
-                    var content = "Content";
-                    var rank = "1";
-                    var buttonText = "Post New!";
-                    var id = "newPost";
-                    postField = postField.format(action, method, "", title, rank, content, buttonText, id);
-                    postField = $(postField);
-                    $(this).after(postField.hide());
-                    $(this).hide();
-                    postField.slideToggle();
-                    $(".cancel-button").click(function() {
-                        postField.remove();
-                        $(".new-post").show();
-                        return false;
-                    });
-                    $(postField).submit(function() {
-                        var form = $("#newPost");
-                        var request = {
-                            type: method,
-                            url: action,
-                            data: form.serialize()
-                        };
-                        $.ajax(request);
-                        location.reload();
-                        return false;
-                    });
-                    return false;
-                });
+                return false;
             });
-        </script>
-    {% endblock %}
-    {% block body %}
-        {% block post_template %} {% endblock %}
-        <div class="pure-g-r" id="new-post">
-            <div class="pure-u-1-1 title-information">
-                <a href="/new/" data-id="" class="new-post pure-button pure-button-primary">new</a>
-            </div>
+            $(".delete-post").click(function () {
+                var dataId = $(this).attr("data-id");
+                var parentDiv = $("#" + dataId);
+                var confirm = $("<div class='confirm' id='" + dataId + "-confirm' ><a href='" + $(this).attr("href") +
+                    "/' class='confirm-delete pure-button pure-button-primary' data-parent-id='" + dataId +
+                    "'>Delete?</a> <a href='#' class='confirm-keep pure-button'>Keep!</a></div>");
+                var elementHeight = parentDiv.height();
+                confirm.css("height", elementHeight + "px").css("line-height", elementHeight + "px");
+                var request = {
+                    type: "DELETE",
+                    url: $(this).attr("href")
+                };
+                toggleDivDisplay(parentDiv, confirm);
+                $(".confirm-delete").click(function () {
+                    sendRequestAndHide(request, parentDiv, confirm);
+                    return false;
+                });
+                $(".confirm-keep").click(function () {
+                    parentDiv.slideToggle();
+                    confirm.slideToggle(400, function () {
+                        $(this).remove()
+                    });
+                    return false;
+                });
+                return false;
+            });
+
+            $(".edit-post").click(function () {
+                var dataId = $(this).attr("data-id");
+                var parentDiv = $("#" + dataId);
+                var postField = $("#form-template").html();
+                var elementHeight = parentDiv.height();
+                var action = "/post/" + dataId + "/";
+                // put for update action, post for new.
+                var method = "PUT";
+                var title = parentDiv.find(".title").text().trim();
+                var content = parentDiv.find(".content").text().trim();
+                var points = parentDiv.find(".points").text().trim();
+                var buttonText = "Update Post";
+                postField = postField.format(action, method, dataId, title, points, content, buttonText, dataId + "-form");
+                postField = $(postField);
+                postField.css("height", elementHeight + "px");
+                toggleDivDisplay(parentDiv, postField);
+                $(".cancel-button").click(function () {
+                    postField.slideToggle(400, function () {
+                        $(this).remove()
+                    });
+                    parentDiv.slideToggle();
+                    return false;
+                });
+                $(postField).submit(function () {
+                    var form = $("#" + dataId + "-form");
+                    var request = {
+                        type: method,
+                        url: action,
+                        data: form.serialize()
+                    };
+                    sendRequestAndHide(request, parentDiv, postField);
+                    var fields = form.serializeArray();
+
+                    $.each(fields, function (i, field) {
+                        //alert(field.value + field.name);
+                        parentDiv.find("." + field.name).text(field.value);
+                    });
+
+                    parentDiv.slideToggle();
+                    return false;
+                });
+                return false;
+            });
+
+            $(".new-post").click(function () {
+                var postField = $("#form-template").html();
+                var action = "/post/";
+                // put for update action, post for new.
+                var method = "POST";
+                var title = "Title";
+                var content = "Content";
+                var rank = "1000";
+                var buttonText = "Post New!";
+                var id = "newPost";
+                postField = postField.format(action, method, "", title, rank, content, buttonText, id);
+                postField = $(postField);
+                $(this).after(postField.hide());
+                $(this).hide();
+                postField.slideToggle();
+                $(".cancel-button").click(function () {
+                    postField.remove();
+                    $(".new-post").show();
+                    return false;
+                });
+                $(postField).submit(function () {
+                    var form = $("#newPost");
+                    var request = {
+                        type: method,
+                        url: action,
+                        data: form.serialize()
+                    };
+                    $.ajax(request);
+                    location.reload();
+                    return false;
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
+{% block body %}
+    {% block post_template %} {% endblock %}
+    <div class="pure-g-r" id="new-post">
+        <div class="pure-u-1-1 title-information">
+            <a href="/new/" data-id="" class="new-post pure-button pure-button-primary">new</a>
         </div>
-        {% for post in posts %}
-            <div class="pure-g" id="{{ post.pk }}">
-                <div class="pure-u-1-4 title-information">
-                    <div class="pure-g">
-                       <div class="pure-u-1-1 title">
-                           {{ post.title }}
-                       </div>
-                       <div class="pure-u-1-1 date">
-                           {{ post.date }}
-                       </div>
-                       <div class="pure-u-1-1 rank-container">
-                           <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" id="{{ post.pk }}" class="rank-link up {{ post.up_active }}">▲</a>
-                       </div>
-                       <div class="pure-u-1-1 rank-container">
-                           <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" id="{{ post.pk }}" class="rank-link down {{ post.down_active }}">▼</a>
-                       </div>
+    </div>
+    {% for post in posts %}
+        <div class="pure-g" id="{{ post.pk }}">
+            <div class="pure-u-1-4 title-information">
+                <div class="pure-g">
+                    <div class="pure-u-1-1 title">
+                        {{ post.title }}
+                    </div>
+                    <div class="pure-u-1-1">
+                        <b>GNAR Points: </b><span class="points">{{ post.points }}</span>
+                    </div>
+                    <div class="pure-u-1-1 rank-container">
+                        <a href="/rank/{{ post.pk }}/1/" data-id="{{ post.pk }}-up" id="{{ post.pk }}"
+                           class="rank-link up {{ post.up_active }}">▲</a>
+                    </div>
+                    <div class="pure-u-1-1 rank-container">
+                        <a href="/rank/{{ post.pk }}/-1/" data-id="{{ post.pk }}-down" id="{{ post.pk }}"
+                           class="rank-link down {{ post.down_active }}">▼</a>
                     </div>
                 </div>
-                <div class="pure-u-3-4 content">{{ post.content }}</div>
-                <div class="pure-u-1-1 post-actions">
-                    <a href="/edit/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">edit </a>
-                    <a href="/post/{{ post.pk }}/" data-id="{{ post.pk }}" class="delete-post">delete </a>
-                </div>
             </div>
-        {% endfor %}
-        <div class="pagination pure-g">
-            <div class="pure-u-1-3">
-                 {% if prev_page %}
-                    <a href="/{{ prev_page }}/">previous page</a>
-                {% endif %}
+            <div class="pure-u-3-4 content">
+                {{ post.content }}
             </div>
-            <div class="pure-u-1-3">
-                {%  for page in pages %}
-                    <a href="/{{ page }}/">{{ page }}</a>
-                {% endfor %}
-            </div>
-            <div class="pure-u-1-3">
-                {% if next_page %}
-                    <a href="/{{ next_page }}/">next page</a>
-                {% endif %}
+            <div class="pure-u-3-4 post-actions">
+                <a href="/edit/{{ post.pk }}/" data-id="{{ post.pk }}" class="edit-post">edit </a>
+                <a href="/post/{{ post.pk }}/" data-id="{{ post.pk }}" class="delete-post">delete </a>
             </div>
         </div>
+    {% endfor %}
+    <div class="pagination pure-g">
+        <div class="pure-u-1-3">
+            {% if prev_page %}
+                <a href="/{{ prev_page }}/">previous page</a>
+            {% endif %}
+        </div>
+        <div class="pure-u-1-3">
+            {% for page in pages %}
+                <a href="/{{ page }}/">{{ page }}</a>
+            {% endfor %}
+        </div>
+        <div class="pure-u-1-3">
+            {% if next_page %}
+                <a href="/{{ next_page }}/">next page</a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
